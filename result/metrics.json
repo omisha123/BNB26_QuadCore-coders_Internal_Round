@@ -1,0 +1,182 @@
+{
+  "splits": {
+    "test_seen": {
+      "n_failed_runs": 227,
+      "top1": 0.9955947136563876,
+      "top3": 1.0,
+      "mrr": 0.9977973568281938,
+      "mean_step_error": 0.004405286343612335,
+      "replay_covers_cause": 0.9955947136563876,
+      "per_fault_type_top1": {
+        "answer_format_error": {
+          "top1": 1.0,
+          "n": 26
+        },
+        "bad_plan": {
+          "top1": 1.0,
+          "n": 62
+        },
+        "corrupted_state": {
+          "top1": 0.973,
+          "n": 37
+        },
+        "irrelevant_retrieval": {
+          "top1": 1.0,
+          "n": 73
+        },
+        "wrong_tool_arg": {
+          "top1": 1.0,
+          "n": 29
+        }
+      },
+      "per_task_type_top1": {
+        "hq_area": 1.0,
+        "hq_founded": 0.988,
+        "hq_population": 1.0
+      },
+      "fail_detection_auc": 0.9312680593055754,
+      "baselines_top1": {
+        "random_step": 0.16299559471365638,
+        "always_last_step": 0.1145374449339207,
+        "always_step_1_(training_majority)": 0.32158590308370044
+      }
+    },
+    "test_unseen_fault": {
+      "n_failed_runs": 414,
+      "top1": 1.0,
+      "top3": 1.0,
+      "mrr": 1.0,
+      "mean_step_error": 0.0,
+      "replay_covers_cause": 1.0,
+      "per_fault_type_top1": {
+        "answer_wrong_rounding": {
+          "top1": 1.0,
+          "n": 139
+        },
+        "dropped_context": {
+          "top1": 1.0,
+          "n": 133
+        },
+        "hallucinated_tool_output": {
+          "top1": 1.0,
+          "n": 142
+        }
+      },
+      "per_task_type_top1": {
+        "hq_area": 1.0,
+        "hq_founded": 1.0,
+        "hq_population": 1.0
+      },
+      "baselines_top1": {
+        "random_step": 0.25120772946859904,
+        "always_last_step": 0.3357487922705314,
+        "always_step_1_(training_majority)": 0.0
+      }
+    },
+    "test_unseen_task": {
+      "n_failed_runs": 202,
+      "top1": 0.995049504950495,
+      "top3": 1.0,
+      "mrr": 0.9975247524752475,
+      "mean_step_error": 0.0049504950495049506,
+      "replay_covers_cause": 0.995049504950495,
+      "per_fault_type_top1": {
+        "answer_format_error": {
+          "top1": 1.0,
+          "n": 22
+        },
+        "answer_wrong_rounding": {
+          "top1": 1.0,
+          "n": 28
+        },
+        "bad_plan": {
+          "top1": 1.0,
+          "n": 37
+        },
+        "corrupted_state": {
+          "top1": 0.947,
+          "n": 19
+        },
+        "dropped_context": {
+          "top1": 1.0,
+          "n": 18
+        },
+        "hallucinated_tool_output": {
+          "top1": 1.0,
+          "n": 26
+        },
+        "irrelevant_retrieval": {
+          "top1": 1.0,
+          "n": 32
+        },
+        "wrong_tool_arg": {
+          "top1": 1.0,
+          "n": 20
+        }
+      },
+      "per_task_type_top1": {
+        "hq_country": 0.995
+      },
+      "fail_detection_auc": 0.8957301980198019,
+      "baselines_top1": {
+        "random_step": 0.17326732673267325,
+        "always_last_step": 0.24752475247524752,
+        "always_step_1_(training_majority)": 0.15841584158415842
+      }
+    }
+  },
+  "learning_curve": [
+    {
+      "train_runs": 100,
+      "test_seen_top1": 0.982,
+      "test_unseen_fault_top1": 0.952
+    },
+    {
+      "train_runs": 200,
+      "test_seen_top1": 0.991,
+      "test_unseen_fault_top1": 0.986
+    },
+    {
+      "train_runs": 400,
+      "test_seen_top1": 0.991,
+      "test_unseen_fault_top1": 0.99
+    },
+    {
+      "train_runs": 800,
+      "test_seen_top1": 0.996,
+      "test_unseen_fault_top1": 0.998
+    },
+    {
+      "train_runs": 1563,
+      "test_seen_top1": 0.996,
+      "test_unseen_fault_top1": 1.0
+    }
+  ],
+  "ablation_top1": {
+    "full model (default)": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    },
+    "+ cross-run memory": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    },
+    "no 'deviation from normal' / elimination feats": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 0.954,
+      "test_unseen_task": 0.748
+    },
+    "no position info": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    },
+    "no neighbour (prev/next) context": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    }
+  }
+}
