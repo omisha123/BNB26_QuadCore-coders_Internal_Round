@@ -18,26 +18,28 @@ def _names(n, suffix=""):
     return sorted(out)
 
 COUNTRIES = ["Zandria", "Molvia", "Kestria", "Taloria", "Quenland", "Brevia"]
-_city_names = _names(30)
-_pops = _rng.sample(range(20, 990), 30)               # unique populations
-CITY_INFO = {c: {"population": _pops[i] * 1000, "country": COUNTRIES[i % 6]}
+_city_names = _names(60)
+_pops = _rng.sample(range(20, 990), 60)               # unique populations (x1000)
+CITY_INFO = {c: {"population": _pops[i] * 1000, "country": COUNTRIES[i % 6],
+                 "area": _rng.randint(40, 900), "founded": _rng.randint(1100, 1950)}
              for i, c in enumerate(_city_names)}
 CITIES = list(CITY_INFO)
-COMPANIES = {co: _rng.choice(CITIES) for co in _names(60, "Corp")}
+COMPANIES = {co: _rng.choice(CITIES) for co in _names(150, "Corp")}
 DOCS = ([f"{co} is headquartered in {city}." for co, city in COMPANIES.items()] +
         [f"{co} was founded by a team of engineers and sells software." for co in COMPANIES] +
         [f"{city} is a city known for its harbor and markets." for city in CITIES])
-TASK_TYPES = ["hq_population", "hq_country"]
+TASK_TYPES = ["hq_population", "hq_country", "hq_area", "hq_founded"]
+_QUESTIONS = {
+    "hq_population": ("What is the population of the city where {c} is headquartered?", "population"),
+    "hq_country":    ("In which country is the city where {c} is headquartered?", "country"),
+    "hq_area":       ("What is the area in square kilometres of the city where {c} is headquartered?", "area"),
+    "hq_founded":    ("In what year was the city where {c} is headquartered founded?", "founded"),
+}
 
 def make_task(company, task_type="hq_population"):
-    city = COMPANIES[company]
-    if task_type == "hq_population":
-        q, exp = f"What is the population of the city where {company} is headquartered?", \
-                 str(CITY_INFO[city]["population"])
-    else:
-        q, exp = f"In which country is the city where {company} is headquartered?", \
-                 CITY_INFO[city]["country"]
-    return {"task_id": f"{task_type}_{company}", "task_type": task_type, "question": q, "expected": exp}
+    tmpl, attr = _QUESTIONS[task_type]
+    return {"task_id": f"{task_type}_{company}", "task_type": task_type,
+            "question": tmpl.format(c=company), "expected": str(CITY_INFO[COMPANIES[company]][attr])}
 
 def all_tasks():
     return [make_task(co, t) for co in COMPANIES for t in TASK_TYPES]
@@ -46,7 +48,10 @@ def all_tasks():
 def f_plan(inp):
     q = inp["question"]
     company = llm(f"Extract the company name from this question. Reply with ONLY the name, nothing else.\nQuestion: {q}", lambda: re.search(r"(\w+Corp)", q).group(1))
-    return {"company": company, "attr": "country" if "country" in q else "population"}
+    qq = re.sub(r"\w+Corp", "", q).lower()
+    attr = ("country" if "country" in qq else "area" if "area" in qq
+            else "founded" if "year" in qq else "population")
+    return {"company": company, "attr": attr}
 
 def f_retrieve(inp):
     words = {inp["company"].lower()}
@@ -87,7 +92,8 @@ def run_step(ctx, step_type, inp, fn):
         if err is None:                      # never cache a failed call
             ctx.c.execute("INSERT OR REPLACE INTO cache VALUES(?,?)", (key, json.dumps(out)))
     if ctx.fault and ctx.fault["step_idx"] == ctx.idx:      # fault injection: corrupt output AFTER cache
-        out = ctx.fault["fn"](out)
+        try: out = ctx.fault["fn"](out, inp)
+        except Exception: pass                              # e.g. API error left out empty
     ctx.state[step_type] = out
     ctx.c.execute("INSERT INTO steps VALUES(?,?,?,?,?,?,?,?,?,?)",
         (ctx.run_id, ctx.idx, step_type, json.dumps(inp), json.dumps(out), json.dumps(before),
