@@ -124,5 +124,59 @@
         "always_step_1_(training_majority)": 0.15841584158415842
       }
     }
+  },
+  "learning_curve": [
+    {
+      "train_runs": 100,
+      "test_seen_top1": 0.982,
+      "test_unseen_fault_top1": 0.952
+    },
+    {
+      "train_runs": 200,
+      "test_seen_top1": 0.991,
+      "test_unseen_fault_top1": 0.986
+    },
+    {
+      "train_runs": 400,
+      "test_seen_top1": 0.991,
+      "test_unseen_fault_top1": 0.99
+    },
+    {
+      "train_runs": 800,
+      "test_seen_top1": 0.996,
+      "test_unseen_fault_top1": 0.998
+    },
+    {
+      "train_runs": 1563,
+      "test_seen_top1": 0.996,
+      "test_unseen_fault_top1": 1.0
+    }
+  ],
+  "ablation_top1": {
+    "full model (default)": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    },
+    "+ cross-run memory": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    },
+    "no 'deviation from normal' / elimination feats": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 0.954,
+      "test_unseen_task": 0.748
+    },
+    "no position info": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    },
+    "no neighbour (prev/next) context": {
+      "test_seen": 0.996,
+      "test_unseen_fault": 1.0,
+      "test_unseen_task": 0.995
+    }
   }
 }
