@@ -63,7 +63,7 @@ def build_features(steps: pd.DataFrame, embedder=None, step_types=None) -> pd.Da
     f["type_code"] = steps.step_type.map({t: i for i, t in enumerate(step_types)}).fillna(-1)
     f["in_len"] = steps.input_text.str.len(); f["out_len"] = steps.output_text.str.len()
     f["out_empty"] = ((steps.output_text.str.strip() == "") & (steps.step_type == "tool_result")).astype(int)
-    f["error"] = steps.error.astype(int)
+    f["error"] = pd.to_numeric(steps.error, errors="coerce").fillna(0).astype(int)
     f["err_in_text"] = steps.output_text.str.contains("error|invalid|timeout|irrelevant|unknown", case=False).astype(int)
     f["latency"] = steps.latency_ms
     f["n_nums_in"] = steps.input_text.map(lambda s: len(_nums(s)))
