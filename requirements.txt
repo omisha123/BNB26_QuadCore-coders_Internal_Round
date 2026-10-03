@@ -1,0 +1,8 @@
+google-genai
+lightgbm
+scikit-learn
+streamlit
+fastapi
+uvicorn
+deepdiff
+pandas

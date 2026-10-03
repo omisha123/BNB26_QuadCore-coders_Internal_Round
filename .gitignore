@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+data/gemini.db
+data/gemini.db-journal
+data/gemini_mock_dry.db
