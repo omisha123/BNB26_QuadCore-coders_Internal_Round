@@ -105,6 +105,10 @@ nav = st.sidebar.radio(
     ]
 )
 
+st.sidebar.markdown("---")
+st.sidebar.caption("🔌 **Backend Connection:** FastAPI / SQLite Shared Engine")
+st.sidebar.caption("🌐 **REST API:** `http://localhost:8001` (Active)")
+
 c = schema.conn()
 
 # --- View 1: Trace Inspector & Diagnosis ---
