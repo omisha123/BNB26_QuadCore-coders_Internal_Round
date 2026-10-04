@@ -1,8 +1,10 @@
 """Black Box: AI Agent Observability, Failure Diagnosis & Backtracking Replay System.
 
-Minimalist Muted Blues & White Palette (Strictly 3 Colors: #FFFFFF, #5B708B, #0F172A).
-Background features a subtle gradient between White and Muted Blue.
-Zero extraneous colors. Strictly emoji-free.
+Theme:
+- Minimalist Muted Blues & White Palette with Background Gradient
+- Red Highlights for Errors, Discrepancies, and Flagged Anomaly Culprits
+- High-Contrast White Text on All Dark Blue / Navy Surfaces and Buttons
+- Strictly Emoji-Free
 """
 import os
 import sys
@@ -25,41 +27,50 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Minimalist Muted Blues & White Theme (3 Colors Only: #FFFFFF, #5B708B, #0F172A)
+# Minimalist Muted Blues, White & Error Red Styling (High-Contrast, Zero Black-on-Dark)
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
     :root {
         --c-white: #FFFFFF;
-        --c-muted: #5B708B;
+        --c-muted: #475569;
         --c-dark: #0F172A;
+        --c-border: #94A3B8;
+        --c-border-light: #CBD5E1;
+        --c-error: #DC2626;
+        --c-error-bg: #FEF2F2;
+        --c-error-border: #F87171;
     }
 
-    /* Global Canvas: Background Gradient strictly between White and Muted Blue */
+    /* Global Canvas: Background Gradient */
     .stApp {
-        background: linear-gradient(180deg, #FFFFFF 0%, rgba(91, 112, 139, 0.18) 100%) !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, rgba(71, 85, 105, 0.14) 100%) !important;
         color: var(--c-dark) !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
 
-    /* Streamlit top header */
+    /* Top header bar */
     header[data-testid="stHeader"] {
         background-color: var(--c-white) !important;
-        border-bottom: 1px solid var(--c-muted) !important;
+        border-bottom: 1px solid var(--c-border-light) !important;
     }
 
-    /* Sidebar: Solid White with Muted Blue Border */
+    /* Sidebar: Solid White with high-contrast text */
     section[data-testid="stSidebar"] {
         background-color: var(--c-white) !important;
-        border-right: 1px solid var(--c-muted) !important;
+        border-right: 1px solid var(--c-border-light) !important;
     }
 
-    /* Typography: Exclusively #0F172A and #5B708B */
+    section[data-testid="stSidebar"] * {
+        color: var(--c-dark) !important;
+    }
+
+    /* Typography */
     h1, h2, h3, h4, h5, h6 {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         color: var(--c-dark) !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         letter-spacing: -0.02em !important;
     }
 
@@ -71,52 +82,61 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 0.86rem !important;
         color: var(--c-dark) !important;
-        background-color: var(--c-white) !important;
-        border: 1px solid var(--c-muted) !important;
+        background-color: #F8FAFC !important;
+        border: 1px solid var(--c-border-light) !important;
+        border-radius: 3px !important;
+        padding: 2px 5px !important;
     }
 
-    /* Card Panels: Solid White, Solid Borders */
+    /* Card Panels */
     .bb-card {
         background-color: var(--c-white);
-        border: 1px solid var(--c-muted);
-        border-radius: 4px;
+        border: 1px solid var(--c-border-light);
+        border-radius: 6px;
         padding: 20px 24px;
         margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     }
 
-    /* Pill Badges */
+    /* Pill Badges: Crisp High Contrast */
     .bb-pill {
         display: inline-block;
-        padding: 3px 9px;
+        padding: 3px 10px;
         font-size: 0.74rem;
-        font-weight: 600;
+        font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
-        border-radius: 2px;
+        border-radius: 3px;
     }
 
     .bb-pill-pass {
-        color: var(--c-white);
-        background-color: var(--c-muted);
-        border: 1px solid var(--c-muted);
+        color: var(--c-white) !important;
+        background-color: var(--c-dark) !important;
+        border: 1px solid var(--c-dark) !important;
     }
 
     .bb-pill-fail {
-        color: var(--c-white);
-        background-color: var(--c-dark);
-        border: 1px solid var(--c-dark);
+        color: var(--c-white) !important;
+        background-color: var(--c-error) !important;
+        border: 1px solid var(--c-error) !important;
     }
 
     .bb-pill-neutral {
-        color: var(--c-dark);
-        background-color: var(--c-white);
-        border: 1px solid var(--c-muted);
+        color: var(--c-dark) !important;
+        background-color: #F1F5F9 !important;
+        border: 1px solid var(--c-border) !important;
+    }
+
+    .bb-pill-muted {
+        color: var(--c-white) !important;
+        background-color: var(--c-muted) !important;
+        border: 1px solid var(--c-muted) !important;
     }
 
     /* LLM Thinking Monologue Box */
     .bb-monologue {
-        background-color: var(--c-white);
-        border: 1px solid var(--c-muted);
+        background-color: #F8FAFC;
+        border: 1px solid var(--c-border-light);
         border-left: 4px solid var(--c-muted);
         border-radius: 0 4px 4px 0;
         padding: 12px 16px;
@@ -128,27 +148,27 @@ st.markdown("""
 
     .bb-monologue-title {
         font-size: 0.72rem;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--c-muted);
         margin-bottom: 4px;
     }
 
-    /* Diagnostic Callout */
+    /* Diagnostic Callout: Red Flag for Errors */
     .bb-anomaly-flag {
-        background-color: var(--c-white);
-        border: 1px solid var(--c-dark);
-        border-left: 4px solid var(--c-dark);
+        background-color: var(--c-error-bg);
+        border: 1px solid var(--c-error-border);
+        border-left: 5px solid var(--c-error);
         border-radius: 4px;
-        padding: 14px 18px;
+        padding: 16px 20px;
         margin: 14px 0;
     }
 
     .bb-anomaly-title {
-        color: var(--c-dark);
+        color: var(--c-error) !important;
         font-weight: 700;
-        font-size: 0.86rem;
+        font-size: 0.88rem;
         letter-spacing: 0.04em;
         text-transform: uppercase;
         margin-bottom: 4px;
@@ -156,16 +176,16 @@ st.markdown("""
 
     /* Backtracking Rewind Arc Banner */
     .bb-backtrack-banner {
-        background-color: var(--c-white);
-        border: 1px solid var(--c-muted);
-        border-left: 4px solid var(--c-dark);
+        background-color: #F8FAFC;
+        border: 1px solid var(--c-border-light);
+        border-left: 5px solid var(--c-error);
         border-radius: 4px;
         padding: 16px 20px;
         margin: 16px 0 24px 0;
     }
 
     .bb-backtrack-title {
-        color: var(--c-dark);
+        color: var(--c-error) !important;
         font-weight: 700;
         font-size: 0.88rem;
         letter-spacing: 0.04em;
@@ -173,29 +193,62 @@ st.markdown("""
         margin-bottom: 6px;
     }
 
-    /* Step Timeline Node */
+    /* Step Timeline Nodes */
     .bb-step-card {
         background-color: var(--c-white);
-        border: 1px solid var(--c-muted);
+        border: 1px solid var(--c-border-light);
         border-radius: 4px;
         padding: 16px 20px;
         margin-bottom: 14px;
     }
 
     .bb-step-card.is-culprit {
-        border: 2px solid var(--c-dark);
+        border: 2px solid var(--c-error) !important;
+        background-color: var(--c-error-bg) !important;
     }
 
     .bb-step-card.is-skipped {
-        border: 1px dashed var(--c-muted);
-        opacity: 0.85;
+        border: 1px dashed var(--c-border);
+        background-color: #F8FAFC;
+        opacity: 0.88;
     }
 
     .bb-step-card.is-replayed {
-        border: 2px solid var(--c-muted);
+        border: 2px solid var(--c-dark);
+        background-color: var(--c-white);
     }
 
-    /* Streamlit widgets overrides */
+    /* Button Styling: Dark Navy Background with Guaranteed White Text */
+    .stButton > button {
+        background-color: var(--c-dark) !important;
+        color: var(--c-white) !important;
+        border: 1px solid var(--c-dark) !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+        padding: 8px 22px !important;
+        font-size: 0.88rem !important;
+    }
+
+    .stButton > button * {
+        color: var(--c-white) !important;
+    }
+
+    .stButton > button:hover {
+        background-color: var(--c-muted) !important;
+        color: var(--c-white) !important;
+        border-color: var(--c-muted) !important;
+    }
+
+    .stButton > button:hover * {
+        color: var(--c-white) !important;
+    }
+
+    .stButton > button:focus, .stButton > button:active {
+        color: var(--c-white) !important;
+        background-color: var(--c-dark) !important;
+    }
+
+    /* Metrics: High-Contrast */
     div[data-testid="stMetricValue"] {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-weight: 700 !important;
@@ -212,28 +265,31 @@ st.markdown("""
         color: var(--c-muted) !important;
     }
 
-    .stButton>button {
-        background-color: var(--c-dark) !important;
-        color: var(--c-white) !important;
-        border: 1px solid var(--c-dark) !important;
-        border-radius: 3px !important;
-        font-weight: 500 !important;
-        padding: 6px 18px !important;
-    }
-
-    .stButton>button:hover {
-        background-color: var(--c-muted) !important;
-        color: var(--c-white) !important;
-        border-color: var(--c-muted) !important;
-    }
-
+    /* Expanders */
     .streamlit-expanderHeader {
         font-weight: 600 !important;
         font-size: 0.92rem !important;
         color: var(--c-dark) !important;
-        border-radius: 3px !important;
+        border-radius: 4px !important;
         background-color: var(--c-white) !important;
-        border: 1px solid var(--c-muted) !important;
+        border: 1px solid var(--c-border-light) !important;
+    }
+
+    /* Input Fields & Dropdowns: Clear Text */
+    div[data-baseweb="select"] > div {
+        background-color: var(--c-white) !important;
+        color: var(--c-dark) !important;
+        border-color: var(--c-border) !important;
+    }
+
+    div[data-baseweb="select"] span {
+        color: var(--c-dark) !important;
+    }
+
+    input[type="text"], textarea {
+        background-color: var(--c-white) !important;
+        color: var(--c-dark) !important;
+        border-color: var(--c-border) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -262,13 +318,13 @@ c = schema.conn()
 
 # Header Banner
 st.markdown("""
-<div style="padding: 12px 0 24px 0; border-bottom: 1px solid #5B708B; margin-bottom: 28px;">
+<div style="padding: 12px 0 24px 0; border-bottom: 1px solid #CBD5E1; margin-bottom: 28px;">
     <div style="display: flex; align-items: baseline; justify-content: space-between;">
         <div>
-            <div style="font-size: 0.76rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B708B; margin-bottom: 4px;">
+            <div style="font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; margin-bottom: 4px;">
                 Agent Observability & Root-Cause Diagnosis
             </div>
-            <div style="font-size: 1.65rem; font-weight: 600; color: #0F172A; letter-spacing: -0.03em;">
+            <div style="font-size: 1.65rem; font-weight: 700; color: #0F172A; letter-spacing: -0.03em;">
                 Black Box: Agent Failure Diagnosis & Backtracking Engine
             </div>
         </div>
@@ -277,7 +333,7 @@ st.markdown("""
             <span class="bb-pill bb-pill-pass" style="margin-left: 6px;">Top-1 Acc: 99.56%</span>
         </div>
     </div>
-    <div style="font-size: 0.88rem; color: #5B708B; margin-top: 6px; max-width: 820px;">
+    <div style="font-size: 0.88rem; color: #475569; margin-top: 6px; max-width: 820px;">
         Monitors multi-step LLM execution traces, isolates faulty reasoning in intermediate steps using 70+ non-intrusive runtime signals, and executes selective backtracking to repair failures without repeating unaffected execution.
     </div>
 </div>
@@ -286,11 +342,11 @@ st.markdown("""
 
 # Sidebar Navigation
 st.sidebar.markdown("""
-<div style="padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid #5B708B;">
-    <div style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5B708B;">
+<div style="padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid #CBD5E1;">
+    <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #475569;">
         Control Center
     </div>
-    <div style="font-size: 1.05rem; font-weight: 600; color: #0F172A; margin-top: 2px;">
+    <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin-top: 2px;">
         Navigation
     </div>
 </div>
@@ -309,8 +365,8 @@ nav = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="font-size: 0.78rem; color: #5B708B; line-height: 1.5;">
-    <strong>Architecture Summary</strong><br>
+<div style="font-size: 0.78rem; color: #475569; line-height: 1.6;">
+    <strong style="color: #0F172A;">Architecture Summary</strong><br>
     - 5 Sequential Agent Steps<br>
     - Pure State Transformations<br>
     - Deterministic Input Hashing<br>
@@ -417,37 +473,39 @@ if nav == "Trace Inspector & AI Diagnosis":
 
         is_pass = run_data.outcome == "pass"
         status_pill = '<span class="bb-pill bb-pill-pass">[PASSED]</span>' if is_pass else '<span class="bb-pill bb-pill-fail">[FAILED]</span>'
-        
+        discrepancy_html = '<span>None (Nominal)</span>' if is_pass else '<span style="color: #DC2626; font-weight: 700;">Mismatch Detected</span>'
+        answer_color = '#0F172A' if is_pass else '#DC2626'
+
         st.markdown(f"""
         <div class="bb-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                 <div>
-                    <span style="font-size: 0.74rem; font-weight: 600; text-transform: uppercase; color: #5B708B; letter-spacing: 0.05em;">Execution Trace Metadata</span>
+                    <span style="font-size: 0.74rem; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.05em;">Execution Trace Metadata</span>
                     <h3 style="margin: 2px 0 0 0; font-size: 1.15rem; color: #0F172A;">Run ID: <code>{run_data.run_id}</code></h3>
                 </div>
                 <div>
                     {status_pill}
                 </div>
             </div>
-            <div style="font-size: 0.92rem; color: #0F172A; margin-bottom: 14px; padding: 10px 14px; background: #FFFFFF; border-radius: 4px; border: 1px solid #5B708B;">
+            <div style="font-size: 0.92rem; color: #0F172A; margin-bottom: 14px; padding: 10px 14px; background: #FFFFFF; border-radius: 4px; border: 1px solid #CBD5E1;">
                 <strong>Task Prompt:</strong> {run_data.question}
             </div>
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; font-size: 0.84rem;">
                 <div>
-                    <span style="color: #5B708B; font-size: 0.74rem; text-transform: uppercase; font-weight: 600;">Task Type</span><br>
-                    <strong>{run_data.task_type}</strong>
+                    <span style="color: #475569; font-size: 0.74rem; text-transform: uppercase; font-weight: 700;">Task Type</span><br>
+                    <strong style="color: #0F172A;">{run_data.task_type}</strong>
                 </div>
                 <div>
-                    <span style="color: #5B708B; font-size: 0.74rem; text-transform: uppercase; font-weight: 600;">Final Agent Answer</span><br>
-                    <code style="color: #0F172A; font-weight: 600;">{run_data.final_answer}</code>
+                    <span style="color: #475569; font-size: 0.74rem; text-transform: uppercase; font-weight: 700;">Final Agent Answer</span><br>
+                    <code style="color: {answer_color}; font-weight: 700;">{run_data.final_answer}</code>
                 </div>
                 <div>
-                    <span style="color: #5B708B; font-size: 0.74rem; text-transform: uppercase; font-weight: 600;">Expected Ground Truth</span><br>
-                    <code style="color: #0F172A; font-weight: 600;">{run_data.expected}</code>
+                    <span style="color: #475569; font-size: 0.74rem; text-transform: uppercase; font-weight: 700;">Expected Ground Truth</span><br>
+                    <code style="color: #0F172A; font-weight: 700;">{run_data.expected}</code>
                 </div>
                 <div>
-                    <span style="color: #5B708B; font-size: 0.74rem; text-transform: uppercase; font-weight: 600;">Discrepancy</span><br>
-                    <span style="color: #0F172A; font-weight: 600;">{'None (Nominal)' if is_pass else 'Mismatch Detected'}</span>
+                    <span style="color: #475569; font-size: 0.74rem; text-transform: uppercase; font-weight: 700;">Discrepancy</span><br>
+                    {discrepancy_html}
                 </div>
             </div>
         </div>
@@ -468,10 +526,10 @@ if nav == "Trace Inspector & AI Diagnosis":
             st.markdown(f"""
             <div class="bb-anomaly-flag">
                 <div class="bb-anomaly-title">AI Root-Cause Diagnosis Assessment</div>
-                <div style="font-size: 0.95rem; font-weight: 600; color: #0F172A; margin: 4px 0 8px 0;">
+                <div style="font-size: 0.96rem; font-weight: 700; color: #991B1B; margin: 4px 0 8px 0;">
                     Flagged Culprit: Step {top_step_idx} ({steps_df.iloc[top_step_idx].step_type.upper() if top_step_idx >= 0 else 'Unknown'})
                 </div>
-                <div style="font-size: 0.88rem; color: #0F172A; line-height: 1.5;">
+                <div style="font-size: 0.88rem; color: #1F2937; line-height: 1.5;">
                     The diagnosis model detected abnormal behavioral divergence at Step {top_step_idx} with 
                     <strong>{top_suspect['confidence']*100:.1f}% confidence</strong> (Suspicion Score: <code>{top_suspect['score']:.3f}</code>).
                     <br>
@@ -483,7 +541,7 @@ if nav == "Trace Inspector & AI Diagnosis":
         st.markdown("""
         <div style="margin: 28px 0 16px 0;">
             <h4 style="margin: 0; font-size: 1.05rem; color: #0F172A;">Sequential Execution Trace & Step Observability</h4>
-            <div style="font-size: 0.82rem; color: #5B708B;">Detailed inspection of LLM actions, internal thinking, state mutations, and diagnostic scores at each step.</div>
+            <div style="font-size: 0.82rem; color: #475569;">Detailed inspection of LLM actions, internal thinking, state mutations, and diagnostic scores at each step.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -509,19 +567,19 @@ if nav == "Trace Inspector & AI Diagnosis":
             with st.container():
                 st.markdown(f"""
                 <div class="{card_class}">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5B708B; padding-bottom: 10px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #CBD5E1; padding-bottom: 10px; margin-bottom: 12px;">
                         <div>
-                            <span style="font-size: 0.84rem; font-weight: 700; letter-spacing: 0.04em; color: #0F172A;">
+                            <span style="font-size: 0.84rem; font-weight: 700; letter-spacing: 0.04em; color: {'#991B1B' if is_culprit else '#0F172A'};">
                                 STEP {step_idx} : {step_type.upper()}
                             </span>
                             {step_status_tag}
                         </div>
-                        <div style="font-size: 0.78rem; color: #5B708B;">
+                        <div style="font-size: 0.78rem; color: #475569;">
                             Latency: <code>{s.latency_ms} ms</code> | Hash: <code>{s.input_hash[:8]}</code>
                         </div>
                     </div>
                     
-                    <div style="font-size: 0.84rem; color: #5B708B; margin-bottom: 6px;">
+                    <div style="font-size: 0.84rem; color: #475569; margin-bottom: 6px;">
                         <strong>Action:</strong> {intent}
                     </div>
 
@@ -582,14 +640,14 @@ elif nav == "Backtracking & Selective Replay":
         <div class="bb-backtrack-banner">
             <div class="bb-backtrack-title">Root-Cause Detection & Backtracking Path</div>
             <div style="font-size: 0.92rem; color: #0F172A; margin-bottom: 8px;">
-                Final answer <code>'{run_info.final_answer}'</code> disagrees with expected <code>'{run_info.expected}'</code>.
-                The diagnostic engine identified <strong>Step {rec_step} ({steps_df.iloc[rec_step].step_type.upper()})</strong> as the earliest point of failure.
+                Final answer <code style="color: #DC2626; font-weight: 700;">'{run_info.final_answer}'</code> disagrees with expected <code>'{run_info.expected}'</code>.
+                The diagnostic engine identified <strong style="color: #DC2626;">Step {rec_step} ({steps_df.iloc[rec_step].step_type.upper()})</strong> as the earliest point of failure.
             </div>
-            <div style="font-size: 0.85rem; color: #5B708B; margin-bottom: 12px;">
+            <div style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">
                 <strong>Reason:</strong> {diag_reasons}.
             </div>
-            <div style="padding: 10px 14px; background: #FFFFFF; border-radius: 4px; border: 1px dashed #5B708B; font-size: 0.84rem; color: #0F172A;">
-                <strong>Backtracking Action:</strong> Rewind agent execution state from Step 4 directly back to <strong>Step {rec_step}</strong>. 
+            <div style="padding: 10px 14px; background: #FFFFFF; border-radius: 4px; border: 1px dashed #DC2626; font-size: 0.84rem; color: #0F172A;">
+                <strong>Backtracking Action:</strong> Rewind agent execution state from Step 4 directly back to <strong style="color: #DC2626;">Step {rec_step}</strong>. 
                 Steps 0 to {rec_step - 1} remain untainted and will be reused directly from cache (0 ms re-compute).
             </div>
         </div>
@@ -652,15 +710,15 @@ elif nav == "Backtracking & Selective Replay":
                         <div class="bb-step-card is-skipped" style="text-align: center; padding: 12px 8px;">
                             <span class="bb-pill bb-pill-neutral">[CACHED]</span><br>
                             <strong style="font-size: 0.85rem; display: block; margin-top: 6px; color: #0F172A;">Step {idx}: {st_info['step_type'].upper()}</strong>
-                            <span style="font-size: 0.74rem; color: #5B708B;">Reused from history</span>
+                            <span style="font-size: 0.74rem; color: #475569;">Reused from history</span>
                         </div>
                         """, unsafe_allow_html=True)
                     elif st_status == "target":
                         st.markdown(f"""
                         <div class="bb-step-card is-culprit" style="text-align: center; padding: 12px 8px;">
                             <span class="bb-pill bb-pill-fail">[TARGET]</span><br>
-                            <strong style="font-size: 0.85rem; display: block; margin-top: 6px; color: #0F172A;">Step {idx}: {st_info['step_type'].upper()}</strong>
-                            <span style="font-size: 0.74rem; color: #0F172A;">Backtrack point</span>
+                            <strong style="font-size: 0.85rem; display: block; margin-top: 6px; color: #991B1B;">Step {idx}: {st_info['step_type'].upper()}</strong>
+                            <span style="font-size: 0.74rem; color: #DC2626; font-weight: 600;">Backtrack point</span>
                         </div>
                         """, unsafe_allow_html=True)
                     else:
@@ -668,7 +726,7 @@ elif nav == "Backtracking & Selective Replay":
                         <div class="bb-step-card is-replayed" style="text-align: center; padding: 12px 8px;">
                             <span class="bb-pill bb-pill-pass">[RE-RUN]</span><br>
                             <strong style="font-size: 0.85rem; display: block; margin-top: 6px; color: #0F172A;">Step {idx}: {st_info['step_type'].upper()}</strong>
-                            <span style="font-size: 0.74rem; color: #5B708B;">Updated context</span>
+                            <span style="font-size: 0.74rem; color: #475569;">Updated context</span>
                         </div>
                         """, unsafe_allow_html=True)
 
@@ -755,6 +813,7 @@ elif nav == "Live Agent Execution Sandbox":
 
         is_pass = outcome == "pass"
         status_pill = '<span class="bb-pill bb-pill-pass">[PASSED]</span>' if is_pass else '<span class="bb-pill bb-pill-fail">[FAILED]</span>'
+        ans_color = '#0F172A' if is_pass else '#DC2626'
 
         st.markdown(f"""
         <div class="bb-card" style="margin-top: 20px;">
@@ -764,9 +823,9 @@ elif nav == "Live Agent Execution Sandbox":
             </div>
             <div style="font-size: 0.88rem; margin-bottom: 12px; color: #0F172A;"><strong>Question:</strong> {run_data[0]}</div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 0.85rem;">
-                <div><strong>Agent Answer:</strong> <code>{run_data[1]}</code></div>
-                <div><strong>Expected:</strong> <code>{run_data[2]}</code></div>
-                <div><strong>Injected Fault:</strong> {selected_fault}</div>
+                <div><strong>Agent Answer:</strong> <code style="color: {ans_color}; font-weight: 700;">{run_data[1]}</code></div>
+                <div><strong>Expected:</strong> <code style="color: #0F172A; font-weight: 700;">{run_data[2]}</code></div>
+                <div><strong>Injected Fault:</strong> <span style="color: {'#0F172A' if is_pass else '#DC2626'}; font-weight: 600;">{selected_fault}</span></div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -780,10 +839,10 @@ elif nav == "Live Agent Execution Sandbox":
             st.markdown(f"""
             <div class="bb-anomaly-flag">
                 <div class="bb-anomaly-title">Behavioral Anomaly Detected</div>
-                <div style="font-size: 0.92rem; font-weight: 600; color: #0F172A; margin: 4px 0;">
+                <div style="font-size: 0.94rem; font-weight: 700; color: #991B1B; margin: 4px 0;">
                     Flagged Culprit: Step {suspect['step_idx']} ({steps_df.iloc[suspect['step_idx']].step_type.upper()})
                 </div>
-                <div style="font-size: 0.85rem; color: #0F172A;">
+                <div style="font-size: 0.85rem; color: #1F2937;">
                     Suspicion Probability: <code>{suspect['score']:.3f}</code> ({suspect['confidence']*100:.1f}% confidence)<br>
                     Diagnostic Reasoning: {', '.join(suspect['reasons'])}
                 </div>
