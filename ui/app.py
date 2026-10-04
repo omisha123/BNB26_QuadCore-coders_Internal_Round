@@ -4,6 +4,7 @@ Theme:
 - Minimalist Muted Blues & White Palette with Background Gradient
 - Red Highlights for Errors, Discrepancies, and Flagged Anomaly Culprits
 - High-Contrast White Text on All Dark Blue / Navy Surfaces and Buttons
+- Alive with Micro-Interactions, 60fps GPU Animations & Animated Backtracking Flow
 - Strictly Emoji-Free
 """
 import os
@@ -27,7 +28,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Minimalist Muted Blues, White & Error Red Styling (High-Contrast, Zero Black-on-Dark)
+# Minimalist Muted Blues, White & Error Red Styling (With Smooth Micro-Interactions)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -36,16 +37,55 @@ st.markdown("""
         --c-white: #FFFFFF;
         --c-muted: #475569;
         --c-dark: #0F172A;
+        --c-dark-hover: #1E293B;
         --c-border: #94A3B8;
         --c-border-light: #CBD5E1;
         --c-error: #DC2626;
         --c-error-bg: #FEF2F2;
         --c-error-border: #F87171;
+        --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Global Canvas: Background Gradient */
+    /* Keyframe Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulseError {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.25);
+            border-color: #DC2626;
+        }
+        50% {
+            box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+            border-color: #EF4444;
+        }
+    }
+
+    @keyframes dashFlow {
+        from {
+            stroke-dashoffset: 48;
+        }
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes subtleGlow {
+        0%, 100% { opacity: 0.85; }
+        50% { opacity: 1; }
+    }
+
+    /* Global Canvas */
     .stApp {
-        background: linear-gradient(180deg, #FFFFFF 0%, rgba(71, 85, 105, 0.14) 100%) !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, rgba(71, 85, 105, 0.12) 100%) !important;
         color: var(--c-dark) !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
@@ -54,9 +94,10 @@ st.markdown("""
     header[data-testid="stHeader"] {
         background-color: var(--c-white) !important;
         border-bottom: 1px solid var(--c-border-light) !important;
+        transition: border-color 0.2s var(--ease-smooth);
     }
 
-    /* Sidebar: Solid White with high-contrast text */
+    /* Sidebar */
     section[data-testid="stSidebar"] {
         background-color: var(--c-white) !important;
         border-right: 1px solid var(--c-border-light) !important;
@@ -84,21 +125,30 @@ st.markdown("""
         color: var(--c-dark) !important;
         background-color: #F8FAFC !important;
         border: 1px solid var(--c-border-light) !important;
-        border-radius: 3px !important;
-        padding: 2px 5px !important;
+        border-radius: 4px !important;
+        padding: 2px 6px !important;
+        transition: border-color 0.2s var(--ease-smooth);
     }
 
-    /* Card Panels */
+    /* Interactive Card Panels with Hover Physics */
     .bb-card {
         background-color: var(--c-white);
         border: 1px solid var(--c-border-light);
         border-radius: 6px;
         padding: 20px 24px;
         margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+        transition: transform 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth), border-color 0.25s var(--ease-smooth);
+        animation: fadeInUp 0.4s var(--ease-smooth) both;
     }
 
-    /* Pill Badges: Crisp High Contrast */
+    .bb-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+        border-color: var(--c-border);
+    }
+
+    /* Pill Badges with Micro-Interactions */
     .bb-pill {
         display: inline-block;
         padding: 3px 10px;
@@ -107,6 +157,11 @@ st.markdown("""
         letter-spacing: 0.04em;
         text-transform: uppercase;
         border-radius: 3px;
+        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+    }
+
+    .bb-pill:hover {
+        transform: scale(1.03);
     }
 
     .bb-pill-pass {
@@ -119,6 +174,7 @@ st.markdown("""
         color: var(--c-white) !important;
         background-color: var(--c-error) !important;
         border: 1px solid var(--c-error) !important;
+        animation: subtleGlow 2.5s ease-in-out infinite;
     }
 
     .bb-pill-neutral {
@@ -144,6 +200,12 @@ st.markdown("""
         font-size: 0.88rem;
         line-height: 1.5;
         color: var(--c-dark);
+        transition: border-left-color 0.2s var(--ease-smooth), background-color 0.2s var(--ease-smooth);
+    }
+
+    .bb-monologue:hover {
+        background-color: #F1F5F9;
+        border-left-color: var(--c-dark);
     }
 
     .bb-monologue-title {
@@ -155,7 +217,7 @@ st.markdown("""
         margin-bottom: 4px;
     }
 
-    /* Diagnostic Callout: Red Flag for Errors */
+    /* Diagnostic Callout: Red Flag with Gentle Pulse */
     .bb-anomaly-flag {
         background-color: var(--c-error-bg);
         border: 1px solid var(--c-error-border);
@@ -163,6 +225,12 @@ st.markdown("""
         border-radius: 4px;
         padding: 16px 20px;
         margin: 14px 0;
+        animation: pulseError 3s ease-in-out infinite, fadeInUp 0.4s var(--ease-smooth) both;
+        transition: transform 0.2s var(--ease-smooth);
+    }
+
+    .bb-anomaly-flag:hover {
+        transform: translateY(-1px);
     }
 
     .bb-anomaly-title {
@@ -181,7 +249,15 @@ st.markdown("""
         border-left: 5px solid var(--c-error);
         border-radius: 4px;
         padding: 16px 20px;
-        margin: 16px 0 24px 0;
+        margin: 16px 0 20px 0;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+        animation: fadeInUp 0.4s var(--ease-smooth) both;
+    }
+
+    .bb-backtrack-banner:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07);
     }
 
     .bb-backtrack-title {
@@ -193,18 +269,31 @@ st.markdown("""
         margin-bottom: 6px;
     }
 
-    /* Step Timeline Nodes */
+    /* Step Timeline Nodes with Hover Physics */
     .bb-step-card {
         background-color: var(--c-white);
         border: 1px solid var(--c-border-light);
-        border-radius: 4px;
+        border-radius: 5px;
         padding: 16px 20px;
         margin-bottom: 14px;
+        transition: transform 0.22s var(--ease-smooth), box-shadow 0.22s var(--ease-smooth), border-color 0.22s var(--ease-smooth);
+        animation: fadeInUp 0.35s var(--ease-smooth) both;
+    }
+
+    .bb-step-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px -2px rgba(15, 23, 42, 0.07);
+        border-color: var(--c-border);
     }
 
     .bb-step-card.is-culprit {
         border: 2px solid var(--c-error) !important;
         background-color: var(--c-error-bg) !important;
+        animation: pulseError 2.8s ease-in-out infinite, fadeInUp 0.35s var(--ease-smooth) both;
+    }
+
+    .bb-step-card.is-culprit:hover {
+        transform: translateY(-2px) scale(1.005);
     }
 
     .bb-step-card.is-skipped {
@@ -218,7 +307,7 @@ st.markdown("""
         background-color: var(--c-white);
     }
 
-    /* Button Styling: Dark Navy Background with Guaranteed White Text */
+    /* Button Styling: Smooth Elevation & Micro-Bounce */
     .stButton > button {
         background-color: var(--c-dark) !important;
         color: var(--c-white) !important;
@@ -227,6 +316,7 @@ st.markdown("""
         font-weight: 600 !important;
         padding: 8px 22px !important;
         font-size: 0.88rem !important;
+        transition: transform 0.18s var(--ease-smooth), background-color 0.18s var(--ease-smooth), box-shadow 0.18s var(--ease-smooth) !important;
     }
 
     .stButton > button * {
@@ -234,21 +324,32 @@ st.markdown("""
     }
 
     .stButton > button:hover {
-        background-color: var(--c-muted) !important;
+        background-color: var(--c-dark-hover) !important;
         color: var(--c-white) !important;
-        border-color: var(--c-muted) !important;
+        border-color: var(--c-dark-hover) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18) !important;
     }
 
-    .stButton > button:hover * {
-        color: var(--c-white) !important;
+    .stButton > button:active {
+        transform: translateY(1px) scale(0.99) !important;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1) !important;
     }
 
-    .stButton > button:focus, .stButton > button:active {
-        color: var(--c-white) !important;
-        background-color: var(--c-dark) !important;
+    /* Metrics Cards with Hover Lift */
+    div[data-testid="stMetric"] {
+        background-color: var(--c-white);
+        border: 1px solid var(--c-border-light);
+        border-radius: 5px;
+        padding: 12px 16px;
+        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
     }
 
-    /* Metrics: High-Contrast */
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
     div[data-testid="stMetricValue"] {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-weight: 700 !important;
@@ -273,13 +374,24 @@ st.markdown("""
         border-radius: 4px !important;
         background-color: var(--c-white) !important;
         border: 1px solid var(--c-border-light) !important;
+        transition: background-color 0.2s var(--ease-smooth), border-color 0.2s var(--ease-smooth);
     }
 
-    /* Input Fields & Dropdowns: Clear Text */
+    .streamlit-expanderHeader:hover {
+        background-color: #F8FAFC !important;
+        border-color: var(--c-border) !important;
+    }
+
+    /* Input Fields */
     div[data-baseweb="select"] > div {
         background-color: var(--c-white) !important;
         color: var(--c-dark) !important;
         border-color: var(--c-border) !important;
+        transition: border-color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+    }
+
+    div[data-baseweb="select"] > div:hover {
+        border-color: var(--c-dark) !important;
     }
 
     div[data-baseweb="select"] span {
@@ -290,6 +402,12 @@ st.markdown("""
         background-color: var(--c-white) !important;
         color: var(--c-dark) !important;
         border-color: var(--c-border) !important;
+        transition: border-color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth) !important;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+        border-color: var(--c-dark) !important;
+        box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.12) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -318,7 +436,7 @@ c = schema.conn()
 
 # Header Banner
 st.markdown("""
-<div style="padding: 12px 0 24px 0; border-bottom: 1px solid #CBD5E1; margin-bottom: 28px;">
+<div style="padding: 12px 0 24px 0; border-bottom: 1px solid #CBD5E1; margin-bottom: 28px; animation: fadeInUp 0.4s ease both;">
     <div style="display: flex; align-items: baseline; justify-content: space-between;">
         <div>
             <div style="font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; margin-bottom: 4px;">
@@ -636,6 +754,7 @@ elif nav == "Backtracking & Selective Replay":
                 rec_step = diag[0]["step_idx"]
                 diag_reasons = ", ".join(diag[0]["reasons"])
 
+        # Animated Interactive Backtracking Rewind Flow Diagram (SVG with Live Dash Animation)
         st.markdown(f"""
         <div class="bb-backtrack-banner">
             <div class="bb-backtrack-title">Root-Cause Detection & Backtracking Path</div>
@@ -643,9 +762,65 @@ elif nav == "Backtracking & Selective Replay":
                 Final answer <code style="color: #DC2626; font-weight: 700;">'{run_info.final_answer}'</code> disagrees with expected <code>'{run_info.expected}'</code>.
                 The diagnostic engine identified <strong style="color: #DC2626;">Step {rec_step} ({steps_df.iloc[rec_step].step_type.upper()})</strong> as the earliest point of failure.
             </div>
-            <div style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">
+            <div style="font-size: 0.85rem; color: #475569; margin-bottom: 14px;">
                 <strong>Reason:</strong> {diag_reasons}.
             </div>
+            
+            <!-- Animated SVG Flow Diagram -->
+            <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 6px; padding: 16px 12px; margin-bottom: 12px; overflow-x: auto;">
+                <svg viewBox="0 0 740 120" style="width: 100%; min-width: 600px; height: 110px;">
+                    <!-- Step Nodes -->
+                    <!-- Step 0 -->
+                    <g transform="translate(20, 60)">
+                        <rect x="0" y="0" width="105" height="38" rx="4" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+                        <text x="52" y="18" fill="#475569" font-size="10" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">STEP 0</text>
+                        <text x="52" y="30" fill="#0F172A" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" text-anchor="middle">PLAN</text>
+                    </g>
+                    <!-- Connector 0 -> 1 -->
+                    <path d="M 125 79 L 160 79" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+                    <!-- Step 1 -->
+                    <g transform="translate(165, 60)">
+                        <rect x="0" y="0" width="105" height="38" rx="4" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+                        <text x="52" y="18" fill="#475569" font-size="10" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">STEP 1</text>
+                        <text x="52" y="30" fill="#0F172A" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" text-anchor="middle">RETRIEVE</text>
+                    </g>
+                    <!-- Connector 1 -> 2 -->
+                    <path d="M 270 79 L 305 79" stroke="#94A3B8" stroke-width="1.5"/>
+
+                    <!-- Step 2 (Flagged Culprit) -->
+                    <g transform="translate(310, 60)">
+                        <rect x="0" y="0" width="115" height="38" rx="4" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+                        <text x="57" y="16" fill="#DC2626" font-size="9" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">[CULPRIT]</text>
+                        <text x="57" y="30" fill="#991B1B" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">STEP 2: REASON</text>
+                    </g>
+                    <!-- Connector 2 -> 3 -->
+                    <path d="M 425 79 L 460 79" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+                    <!-- Step 3 -->
+                    <g transform="translate(465, 60)">
+                        <rect x="0" y="0" width="105" height="38" rx="4" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+                        <text x="52" y="18" fill="#475569" font-size="10" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">STEP 3</text>
+                        <text x="52" y="30" fill="#0F172A" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" text-anchor="middle">TOOL</text>
+                    </g>
+                    <!-- Connector 3 -> 4 -->
+                    <path d="M 570 79 L 605 79" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+                    <!-- Step 4 (Failed Answer) -->
+                    <g transform="translate(610, 60)">
+                        <rect x="0" y="0" width="115" height="38" rx="4" fill="#FEF2F2" stroke="#DC2626" stroke-width="1.5"/>
+                        <text x="57" y="16" fill="#DC2626" font-size="9" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">[FAIL]</text>
+                        <text x="57" y="30" fill="#991B1B" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">STEP 4: ANSWER</text>
+                    </g>
+
+                    <!-- Animated Backtracking Loop Arc from Step 4 back to Step 2 -->
+                    <path d="M 667 58 C 667 15, 367 15, 367 56" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="6,4" style="animation: dashFlow 1.4s linear infinite;"/>
+                    <polygon points="367,58 362,48 372,48" fill="#DC2626"/>
+                    <rect x="445" y="6" width="145" height="18" rx="3" fill="#DC2626"/>
+                    <text x="517" y="19" fill="#FFFFFF" font-size="9.5" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" text-anchor="middle">BACKTRACK REWIND ARC</text>
+                </svg>
+            </div>
+
             <div style="padding: 10px 14px; background: #FFFFFF; border-radius: 4px; border: 1px dashed #DC2626; font-size: 0.84rem; color: #0F172A;">
                 <strong>Backtracking Action:</strong> Rewind agent execution state from Step 4 directly back to <strong style="color: #DC2626;">Step {rec_step}</strong>. 
                 Steps 0 to {rec_step - 1} remain untainted and will be reused directly from cache (0 ms re-compute).
