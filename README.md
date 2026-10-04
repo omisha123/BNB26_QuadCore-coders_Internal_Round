@@ -1,5 +1,7 @@
 # Black Box ◼ AI-Powered Agent Trace Debugging & Replay System
 
+> **Hackathon Submission Version 1.0.0** | Final Release
+
 Black Box is an AI-powered debugging and root-cause analysis system designed for multi-step AI agents. It learns from observable execution traces (inputs, outputs, intermediate state diffs, latency, error flags) to identify suspicious or failure-causing steps in an agent's execution sequence.
 
 When an agent run fails, Black Box pinpoints the exact problematic step with high confidence, explains **why** it failed in clear natural language, and enables **Selective Partial Replay**—verifying proposed fixes without re-executing unaffected upstream steps.
